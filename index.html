@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>旬の九州 よか｜久留米・日吉町の和食と九州の地酒</title>
+        <meta name="description" content="福岡県久留米市の和食店「旬の九州 よか」。九州の旬の魚と野菜を、包丁仕事と火入れで丁寧に仕立てます。焼酎・日本酒など九州の地酒とともに、カウンターとテーブル席でごゆっくりどうぞ。">
+        <meta name="robots" content="noindex, nofollow">
+
+        <meta property="og:type" content="website">
+        <meta property="og:locale" content="ja_JP">
+        <meta property="og:site_name" content="旬の九州 よか">
+        <meta property="og:title" content="旬の九州 よか｜久留米・日吉町の和食と九州の地酒">
+        <meta property="og:image" content="images/ogp.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+
+        <!-- ブラウザのツールバー色。--color-night と揃える -->
+        <meta name="theme-color" content="#1b1714">
+        <link rel="icon" href="favicon.ico" sizes="any">
+
+        <script>document.documentElement.classList.add('js')</script>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500&display=swap">
+
+        <!-- Tailwind CSS v4（CDN 版）。下の text/tailwindcss の中に @theme などを書ける -->
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+
+        <style type="text/tailwindcss">
+            /*
+             * デザイントークン
+             * 配色は写真の「白木のカウンター」「朱の器」「墨色の皿」から取っている。
+             */
+            @theme {
+                --font-sans: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', Meiryo, ui-sans-serif, system-ui, sans-serif;
+                --font-serif: 'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+
+                --color-paper: #f7f3ec;
+                --color-paper-deep: #efe8dc;
+                --color-ink: #231d19;
+                --color-ink-soft: #5c524b;
+                --color-line: #ddd2c2;
+                --color-shu: #8e2f22;
+                --color-shu-deep: #6f2419;
+                --color-night: #1b1714;
+                --color-wood: #d8b98f;
+
+                --spacing-section: 6rem;
+                --spacing-section-lg: 9rem;
+                --spacing-bar: 4.5rem;
+
+                --tracking-wide-jp: 0.12em;
+                --tracking-label: 0.3em;
+
+                --animate-kenburns: kenburns 20s ease-in-out infinite alternate;
+                --animate-hero-fade: hero-fade 24s ease-in-out infinite;
+                --animate-char-in: char-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+                @keyframes char-in {
+                    from { opacity: 0; transform: translateY(-0.4em); filter: blur(6px); }
+                    to { opacity: 1; transform: none; filter: none; }
+                }
+
+                @keyframes kenburns {
+                    from { transform: scale(1); }
+                    to { transform: scale(1.08); }
+                }
+
+                /* 24秒で1周。3枚を6秒ずつずらし、1枚目（下に敷いた写真）との間で重ねて切り替える */
+                @keyframes hero-fade {
+                    0% { opacity: 0; }
+                    6% { opacity: 1; }
+                    25% { opacity: 1; }
+                    31% { opacity: 0; }
+                    100% { opacity: 0; }
+                }
+            }
+
+            @utility on-dark { --focus-ring: var(--color-wood); }
+            @utility on-light { --focus-ring: var(--color-shu); }
+            @utility pb-safe { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+            @utility vertical-rl { writing-mode: vertical-rl; }
+            @utility break-phrase { word-break: auto-phrase; }
+
+            /* 和紙の質感（images/texture/washi.webp を背景色に乗算で重ねる） */
+            @utility washi {
+                background-image: url('images/texture/washi.webp');
+                background-blend-mode: multiply;
+            }
+
+            @layer base {
+                html {
+                    scroll-behavior: smooth;
+                    scroll-padding-top: 4.5rem;
+                }
+
+                body {
+                    @apply washi bg-paper font-sans text-ink antialiased;
+                    line-height: 1.8;
+                    font-feature-settings: 'palt';
+                }
+
+                h1, h2, h3 {
+                    @apply font-serif;
+                    line-break: strict;
+                    word-break: auto-phrase;
+                }
+
+                :focus-visible {
+                    @apply outline-2 outline-offset-4;
+                    outline-color: var(--focus-ring, var(--color-shu));
+                }
+
+                html:has(dialog[open]) { overflow: hidden; }
+
+                @media (prefers-reduced-motion: reduce) {
+                    html { scroll-behavior: auto; }
+                    *, *::before, *::after {
+                        animation-duration: 0.01ms !important;
+                        animation-iteration-count: 1 !important;
+                        transition-duration: 0.01ms !important;
+                    }
+                }
+            }
+
+            @layer components {
+                .hero-slide { animation: var(--animate-hero-fade); }
+                .hero-slide:nth-of-type(2) { animation-delay: 6s; }
+                .hero-slide:nth-of-type(3) { animation-delay: 12s; }
+                .hero-slide:nth-of-type(4) { animation-delay: 18s; }
+
+                /* スクロールで表示されたときにふわっと浮かび上がる */
+                .js [data-reveal] {
+                    opacity: 0;
+                    transform: translateY(1.5rem);
+                    transition: opacity 0.9s ease, transform 0.9s ease;
+                }
+                .js [data-reveal].is-visible { opacity: 1; transform: none; }
+
+                /* 写真は障子を引くように左から現れる */
+                .js [data-reveal='wipe'] {
+                    opacity: 0;
+                    transform: none;
+                    clip-path: inset(0 100% 0 0);
+                    transition: clip-path 1.4s cubic-bezier(0.77, 0, 0.18, 1), opacity 0.9s ease;
+                }
+                .js [data-reveal='wipe'].is-visible { opacity: 1; clip-path: inset(0); }
+
+                /* お品書き：写真を同じ場所に重ねて、選んだものだけを表示する */
+                [data-menu][data-enhanced] .menu-panels > [data-dish-panel] {
+                    grid-area: 1 / 1;
+                    visibility: hidden;
+                    opacity: 0;
+                    transition: opacity 0.6s ease, visibility 0.6s;
+                }
+                [data-menu][data-enhanced] .menu-panels > [data-dish-panel][data-active] {
+                    visibility: visible;
+                    opacity: 1;
+                }
+
+                @media (prefers-reduced-motion: reduce) {
+                    .js [data-reveal='wipe'] { opacity: 1; clip-path: none; }
+                    .js [data-reveal] { opacity: 1; transform: none; }
+                }
+            }
+
+            /* 停止ボタンで、ズームと切り替えを一時停止する */
+            .is-paused .animate-kenburns,
+            .is-paused .hero-slide {
+                animation-play-state: paused;
+            }
+        </style>
+
+        <script src="js/main.js" defer></script>
+    </head>
+    <body class="min-h-dvh pb-bar md:pb-0">
+        <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-paper focus:px-4 focus:py-2 focus:text-ink">
+            本文へ移動
+        </a>
+
+        <!-- ===== ヘッダー（最上部では透明、スクロールすると墨色の帯） ===== -->
+        <header
+            class="on-dark fixed inset-x-0 top-0 z-40 bg-night/90 text-paper backdrop-blur transition-colors duration-500 data-at-top:bg-transparent data-at-top:bg-linear-to-b data-at-top:from-night/60 data-at-top:to-transparent data-at-top:backdrop-blur-none"
+            data-site-header
+        >
+            <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 lg:px-8">
+                <a href="#top" class="font-serif text-lg tracking-wide-jp transition-opacity hover:opacity-75">旬の九州 よか</a>
+
+                <nav aria-label="メインメニュー" class="hidden md:block">
+                    <ul class="flex items-center gap-8 text-sm tracking-wide-jp">
+                        <li><a href="#concept" class="py-2 transition-colors hover:text-wood">想い</a></li>
+                        <li><a href="#food" class="py-2 transition-colors hover:text-wood">お品書き</a></li>
+                        <li><a href="#drink" class="py-2 transition-colors hover:text-wood">お飲み物</a></li>
+                        <li><a href="#space" class="py-2 transition-colors hover:text-wood">空間</a></li>
+                        <li><a href="#access" class="py-2 transition-colors hover:text-wood">店舗案内</a></li>
+                    </ul>
+                </nav>
+
+                <a href="tel:05017247878" class="hidden border border-wood px-4 py-2 text-sm tracking-wide-jp text-wood transition-colors hover:bg-wood hover:text-night md:inline-block">
+                    ご予約 050-1724-7878
+                </a>
+
+                <button type="button" commandfor="mobile-menu" command="show-modal" aria-haspopup="dialog" class="-mr-2 inline-flex size-12 items-center justify-center md:hidden">
+                    <svg aria-hidden="true" class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M4 7h16M4 12h16M4 17h16" />
+                    </svg>
+                    <span class="sr-only">メニューを開く</span>
+                </button>
+            </div>
+
+            <dialog id="mobile-menu" aria-label="メニュー" class="on-dark m-0 h-dvh max-h-none w-full max-w-none bg-night px-5 pt-2 text-paper backdrop:bg-night/60">
+                <div class="flex h-16 items-center justify-between">
+                    <p class="font-serif text-lg tracking-wide-jp">旬の九州 よか</p>
+                    <button type="button" commandfor="mobile-menu" command="close" class="-mr-2 inline-flex size-12 items-center justify-center">
+                        <svg aria-hidden="true" class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M6 6l12 12M18 6L6 18" />
+                        </svg>
+                        <span class="sr-only">メニューを閉じる</span>
+                    </button>
+                </div>
+
+                <nav aria-label="モバイルメニュー" class="mt-6">
+                    <ul class="divide-y divide-paper/15 border-y border-paper/15 font-serif text-lg tracking-wide-jp">
+                        <li><a href="#concept" class="block py-4 transition-colors hover:text-wood" data-menu-link>想い</a></li>
+                        <li><a href="#food" class="block py-4 transition-colors hover:text-wood" data-menu-link>お品書き</a></li>
+                        <li><a href="#drink" class="block py-4 transition-colors hover:text-wood" data-menu-link>お飲み物</a></li>
+                        <li><a href="#space" class="block py-4 transition-colors hover:text-wood" data-menu-link>空間</a></li>
+                        <li><a href="#access" class="block py-4 transition-colors hover:text-wood" data-menu-link>店舗案内</a></li>
+                    </ul>
+                </nav>
+
+                <a href="tel:05017247878" class="mt-10 inline-flex min-h-12 w-full items-center justify-center gap-2 bg-shu px-7 py-3 text-sm tracking-wide-jp text-paper transition-colors duration-300 hover:bg-shu-deep">
+                    電話で予約する 050-1724-7878
+                </a>
+            </dialog>
+        </header>
+
+        <main id="main">
+
+            <!-- ===== ファーストビュー ===== -->
+            <section id="top" class="on-dark relative isolate overflow-hidden bg-night text-paper" aria-labelledby="hero-title" data-slideshow>
+                <!-- 写真はゆっくりズームしながら切り替わる。2枚目以降はページの読み込み後に取得する -->
+                <div class="absolute inset-0 -z-10 animate-kenburns">
+                    <img
+                        src="images/hero/table-spread-1600.webp"
+                        srcset="images/hero/table-spread-400.webp 400w, images/hero/table-spread-800.webp 800w, images/hero/table-spread-1600.webp 1600w"
+                        sizes="100vw" width="1600" height="1067" fetchpriority="high" decoding="async"
+                        alt="お造り、カマの塩焼き、鍋、揚げ出し豆腐などが並んだ食卓"
+                        class="absolute inset-0 size-full object-cover"
+                    >
+                    <img data-photo="concept/sake-pour" alt="" sizes="100vw" width="1600" height="1067" decoding="async" class="hero-slide absolute inset-0 size-full object-cover opacity-0">
+                    <img data-photo="space/counter" alt="" sizes="100vw" width="1600" height="1067" decoding="async" class="hero-slide absolute inset-0 size-full object-cover opacity-0">
+                    <img data-photo="shop/entrance" alt="" sizes="100vw" width="1600" height="1067" decoding="async" class="hero-slide absolute inset-0 size-full object-cover opacity-0">
+                </div>
+                <div aria-hidden="true" class="absolute inset-0 -z-10 bg-linear-to-t from-night via-night/60 to-night/20"></div>
+                <div aria-hidden="true" class="absolute inset-0 -z-10 bg-linear-to-l from-night/70 via-night/20 to-transparent"></div>
+
+                <div class="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-between gap-10 px-5 pt-28 pb-16 lg:flex-row-reverse lg:items-center lg:px-8 lg:pb-24">
+                    <!-- 縦書きのキャッチコピー（右から左へ読む） -->
+                    <div class="self-end vertical-rl lg:self-center">
+                        <p class="font-serif text-sm tracking-label text-wood">久留米・日吉町　和食と地酒</p>
+                        <!-- 一文字ずつ浮かび上がる。文字は main.js で data-chars から組み立てる -->
+                        <h1 id="hero-title" class="mr-4 text-4xl leading-snug tracking-wide-jp sm:text-5xl lg:mr-6 lg:text-6xl">
+                            <span class="sr-only">九州の旬を、ひと皿ずつ。</span>
+                            <span aria-hidden="true" class="block" data-chars="九州の旬を、"></span>
+                            <span aria-hidden="true" class="block lg:mt-24" data-chars="ひと皿ずつ。"></span>
+                        </h1>
+                    </div>
+
+                    <div class="lg:self-end">
+                        <p class="max-w-xl text-base text-pretty break-phrase text-paper/90 sm:text-lg">
+                            旬の九州 よかは、九州の海と山の恵みを手仕事で仕立てる和食店です。地酒を片手に、季節の味をゆっくりお楽しみください。
+                        </p>
+                        <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+                            <a href="tel:05017247878" class="inline-flex min-h-12 items-center justify-center gap-2 bg-shu px-7 py-3 text-sm tracking-wide-jp text-paper transition-colors duration-300 hover:bg-shu-deep">電話で予約する</a>
+                            <a href="#food" class="inline-flex min-h-12 items-center justify-center gap-2 border border-paper/80 px-7 py-3 text-sm tracking-wide-jp text-paper transition-colors duration-300 hover:bg-paper hover:text-ink">お品書きを見る</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- スライドショーの停止・再生 -->
+                <button type="button" hidden data-slideshow-toggle class="absolute right-4 bottom-4 inline-flex min-h-10 items-center gap-2 px-3 text-xs tracking-wide-jp text-paper/85 transition-colors hover:text-paper lg:right-8 lg:bottom-6">
+                    <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="currentColor" data-icon="pause">
+                        <path d="M7 5h3v14H7zM14 5h3v14h-3z" />
+                    </svg>
+                    <svg aria-hidden="true" class="hidden size-4" viewBox="0 0 24 24" fill="currentColor" data-icon="play">
+                        <path d="M8 5l11 7-11 7z" />
+                    </svg>
+                    <span data-label>スライドショーを停止</span>
+                </button>
+            </section>
+
+            <!-- ===== 想い ===== -->
+            <section id="concept" class="py-section lg:py-section-lg" aria-labelledby="concept-title">
+                <div class="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-12 lg:gap-16 lg:px-8">
+                    <div class="lg:col-span-5" data-reveal>
+                        <div class="relative isolate">
+                            <span aria-hidden="true" class="pointer-events-none absolute -top-12 -left-2 -z-10 font-serif text-9xl leading-none text-ink/5 select-none">旬</span>
+                            <p aria-hidden="true" class="font-serif text-xs tracking-label text-shu uppercase">Concept</p>
+                            <h2 id="concept-title" class="mt-3 text-2xl leading-snug tracking-wide-jp sm:text-3xl lg:text-4xl">
+                                包丁ひとつで、<br class="hidden sm:inline">素材の声を聴く。
+                            </h2>
+                        </div>
+                        <div class="mt-8 space-y-5 text-ink-soft">
+                            <p>その日いちばんの魚を見極め、身の状態に合わせて引き方を変える。焼くか、煮るか、生で味わうか。素材がいちばん輝く仕立てを、毎日の仕込みの中で探しています。</p>
+                            <p>派手な飾りより、ひと口目の「おいしい」を大切に。九州で育った食材と酒の組み合わせで、肩の力を抜いて過ごせる時間をお届けします。</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-5 gap-4 lg:col-span-7">
+                        <img data-photo="concept/table-spread" sizes="(min-width: 1024px) 35vw, 60vw" alt="鍋、カマの塩焼き、秋刀魚、お造り、豚ロースのソテーなどが並ぶ食卓" class="col-span-3 aspect-3/4 w-full object-cover" data-reveal="wipe">
+                        <img data-photo="concept/sake-pour" sizes="(min-width: 1024px) 25vw, 40vw" alt="お造りの横でグラスに冷酒を注ぐ様子" class="col-span-2 mt-16 aspect-3/4 w-full object-cover" data-reveal="wipe">
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== お品書き（縦書きの料理名を選ぶと写真が切り替わる。パネルとタブは main.js で生成） ===== -->
+            <section id="food" class="on-dark bg-night py-section text-paper lg:py-section-lg" aria-labelledby="food-title" data-menu>
+                <div class="mx-auto max-w-6xl px-5 lg:px-8">
+                    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between" data-reveal>
+                        <div class="relative isolate">
+                            <span aria-hidden="true" class="pointer-events-none absolute -top-12 -left-2 -z-10 font-serif text-9xl leading-none text-paper/5 select-none">味</span>
+                            <p aria-hidden="true" class="font-serif text-xs tracking-label text-wood uppercase">Cuisine</p>
+                            <h2 id="food-title" class="mt-3 text-2xl leading-snug tracking-wide-jp sm:text-3xl lg:text-4xl">お品書き</h2>
+                        </div>
+                        <p class="max-w-md text-sm text-paper/80">
+                            お造りから焼き物、揚げ物、鍋まで。季節と仕入れに合わせて、その日のお品書きをご用意しています。
+                        </p>
+                    </div>
+
+                    <div class="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center lg:gap-10">
+                        <!-- 料理の写真と説明 -->
+                        <div class="menu-panels grid min-w-0 grid-cols-1 gap-12 lg:col-span-7" data-dish-panels></div>
+
+                        <!-- 和紙の短冊に墨で書いたお品書き -->
+                        <div class="min-w-0 lg:col-span-5" hidden data-dish-tabs>
+                            <div class="on-light washi relative bg-paper px-3 pt-8 pb-20 text-ink shadow-2xl sm:px-6 lg:pb-24">
+                                <div class="flex flex-row-reverse items-start gap-1 overflow-x-auto sm:justify-center-safe sm:gap-2">
+                                    <p aria-hidden="true" class="hidden shrink-0 border-l border-line pl-4 font-serif text-2xl tracking-label vertical-rl sm:block">お品書き</p>
+                                    <div role="tablist" aria-label="お品書き" class="flex flex-row-reverse items-start font-serif text-base leading-tight tracking-wide-jp sm:gap-1 sm:text-lg lg:text-base xl:text-lg" data-tablist></div>
+                                </div>
+
+                                <!-- 朱の落款（装飾） -->
+                                <span aria-hidden="true" class="absolute bottom-6 left-6 grid size-12 -rotate-6 place-items-center rounded-sm bg-shu font-serif text-sm text-paper vertical-rl">よか</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="mt-12 text-sm text-paper/80">※ 掲載のお料理は一例です。仕入れにより内容が変わります。</p>
+                </div>
+
+                <!-- main.js が複製して使うタブのひな形（クラス名を HTML に書いておき、Tailwind に検出させる） -->
+                <template data-tab-template>
+                    <button type="button" role="tab" class="shrink-0 border-r-2 border-transparent px-1 py-1 text-ink-soft vertical-rl transition-colors hover:text-ink aria-selected:border-shu aria-selected:text-ink sm:px-2" data-dish-tab></button>
+                </template>
+                <template data-panel-template>
+                    <div role="tabpanel" data-dish-panel>
+                        <figure>
+                            <img sizes="(min-width: 1024px) 58vw, 100vw" class="aspect-4/3 w-full object-cover" alt="">
+                            <figcaption class="mt-5 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-6">
+                                <span class="font-serif text-xl tracking-wide-jp" data-name></span>
+                                <span class="text-sm text-paper/80" data-text></span>
+                            </figcaption>
+                        </figure>
+                    </div>
+                </template>
+            </section>
+
+            <!-- ===== お飲み物 ===== -->
+            <section id="drink" class="py-section lg:py-section-lg" aria-labelledby="drink-title">
+                <div class="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-2 lg:gap-16 lg:px-8">
+                    <div class="order-2 lg:order-1">
+                        <img data-photo="drink/shochu" sizes="(min-width: 1024px) 50vw, 100vw" alt="焼酎の一升瓶を背景に、徳利と猪口、小皿を並べたカウンター" class="aspect-4/3 w-full object-cover" data-reveal="wipe">
+                        <div class="mt-4 grid grid-cols-2 gap-4">
+                            <img data-photo="drink/sake-bottles" sizes="(min-width: 1024px) 25vw, 50vw" alt="棚に並ぶ九州の焼酎の瓶" class="aspect-4/3 w-full object-cover" data-reveal="wipe">
+                            <img data-photo="drink/whisky" sizes="(min-width: 1024px) 25vw, 50vw" alt="棚に並ぶウイスキーのボトル" class="aspect-4/3 w-full object-cover" data-reveal="wipe">
+                        </div>
+                    </div>
+
+                    <div class="order-1 lg:order-2" data-reveal>
+                        <div class="relative isolate">
+                            <span aria-hidden="true" class="pointer-events-none absolute -top-12 -left-2 -z-10 font-serif text-9xl leading-none text-ink/5 select-none">酒</span>
+                            <p aria-hidden="true" class="font-serif text-xs tracking-label text-shu uppercase">Drinks</p>
+                            <h2 id="drink-title" class="mt-3 text-2xl leading-snug tracking-wide-jp sm:text-3xl lg:text-4xl">
+                                料理に寄り添う、<br>九州の地酒。
+                            </h2>
+                        </div>
+                        <div class="mt-8 space-y-5 text-ink-soft">
+                            <p>芋・麦・米と個性豊かな九州の焼酎に、蔵元の顔が見える日本酒。お造りには香りの穏やかな一杯を、焼き物にはしっかりとした一杯を。料理に合わせた選び方も、お気軽にお尋ねください。</p>
+                            <p>食後にはウイスキーもご用意しています。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== 空間・ご利用シーン ===== -->
+            <section id="space" class="on-dark bg-night py-section text-paper lg:py-section-lg" aria-labelledby="space-title">
+                <div class="mx-auto max-w-6xl px-5 lg:px-8">
+                    <div class="relative isolate text-center" data-reveal>
+                        <span aria-hidden="true" class="pointer-events-none absolute -top-12 left-1/2 -z-10 -translate-x-1/2 font-serif text-9xl leading-none text-paper/5 select-none">寛</span>
+                        <p aria-hidden="true" class="font-serif text-xs tracking-label text-wood uppercase">Space</p>
+                        <h2 id="space-title" class="mt-3 text-2xl leading-snug tracking-wide-jp sm:text-3xl lg:text-4xl">
+                            白木のカウンターで、<br class="sm:hidden">くつろぎのひとときを。
+                        </h2>
+                    </div>
+
+                    <div class="mt-12 grid gap-4 md:grid-cols-3 md:grid-rows-2">
+                        <img data-photo="space/counter" sizes="(min-width: 768px) 66vw, 100vw" alt="白木のカウンター席とテーブル席が並ぶ明るい店内" class="aspect-4/3 w-full object-cover md:col-span-2 md:row-span-2 md:aspect-auto md:h-full" data-reveal="wipe">
+                        <img data-photo="space/table" sizes="(min-width: 768px) 33vw, 100vw" alt="壁際に置かれた木のテーブル席" class="aspect-4/3 w-full object-cover" data-reveal="wipe">
+                        <img data-photo="space/lamp" sizes="(min-width: 768px) 33vw, 100vw" alt="琥珀色のガラスのペンダントライトとカウンター" class="aspect-4/3 w-full object-cover" data-reveal="wipe">
+                    </div>
+
+                    <ul class="mt-16 grid gap-10 md:grid-cols-3">
+                        <li class="border-t border-paper/15 pt-6" data-reveal>
+                            <h3 class="text-xl tracking-wide-jp">おひとりで</h3>
+                            <p class="mt-3 text-sm text-paper/80">カウンター越しに料理の話をしながら、気ままに一杯。仕事帰りにふらりとお立ち寄りください。</p>
+                        </li>
+                        <li class="border-t border-paper/15 pt-6" data-reveal>
+                            <h3 class="text-xl tracking-wide-jp">ご友人・ご家族と</h3>
+                            <p class="mt-3 text-sm text-paper/80">テーブル席で大皿を囲んで。季節の料理を少しずつ分け合うのも楽しみのひとつです。</p>
+                        </li>
+                        <li class="border-t border-paper/15 pt-6" data-reveal>
+                            <h3 class="text-xl tracking-wide-jp">会食・お祝いに</h3>
+                            <p class="mt-3 text-sm text-paper/80">大切な方との食事や記念日にも。ご予算やご要望は、ご予約の際にご相談ください。</p>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ===== ご予約（差し色の朱で区切る） ===== -->
+            <section class="on-dark washi bg-shu py-section text-center text-paper" aria-labelledby="reserve-title">
+                <div class="mx-auto max-w-3xl px-5" data-reveal>
+                    <p aria-hidden="true" class="font-serif text-xs tracking-label text-wood uppercase">Reservation</p>
+                    <h2 id="reserve-title" class="mt-3 text-2xl leading-snug tracking-wide-jp sm:text-3xl lg:text-4xl">ご予約・お問い合わせ</h2>
+                    <p class="mt-6 text-paper/90">お席のご予約は、お電話にて承ります。</p>
+                    <a href="tel:05017247878" class="mt-6 inline-block font-serif text-3xl tracking-wide-jp text-paper underline-offset-8 transition-colors hover:text-wood hover:underline sm:text-4xl">
+                        <span class="sr-only">電話番号 </span>050-1724-7878
+                    </a>
+                    <p class="mt-3 text-sm text-paper/90">
+                        <span class="block">月・火・木・金・土 17:00 – 23:00</span>
+                        <span class="block">定休日 水曜日・日曜日・1月1日</span>
+                    </p>
+                </div>
+            </section>
+
+            <!-- ===== 店舗案内 ===== -->
+            <section id="access" class="py-section lg:py-section-lg" aria-labelledby="access-title">
+                <div class="mx-auto grid max-w-6xl gap-12 px-5 lg:grid-cols-2 lg:gap-16 lg:px-8">
+                    <div class="space-y-4">
+                        <img data-photo="shop/entrance" sizes="(min-width: 1024px) 50vw, 100vw" alt="白い外壁に紺色の格子戸が映える店の入口" class="aspect-4/3 w-full object-cover" data-reveal="wipe">
+
+                        <!-- 地図：押したときに初めて Google マップを読み込む -->
+                        <div class="washi relative aspect-video w-full overflow-hidden border border-line bg-paper-deep" data-reveal>
+                            <a
+                                href="https://www.google.com/maps/search/?api=1&amp;query=%E7%A6%8F%E5%B2%A1%E7%9C%8C%E4%B9%85%E7%95%99%E7%B1%B3%E5%B8%82%E6%97%A5%E5%90%89%E7%94%BA14-36+%E5%8E%9F%E5%8F%A3%E3%83%93%E3%83%AB"
+                                target="_blank" rel="noopener"
+                                data-map-load="https://www.google.com/maps?output=embed&amp;hl=ja&amp;z=17&amp;q=%E7%A6%8F%E5%B2%A1%E7%9C%8C%E4%B9%85%E7%95%99%E7%B1%B3%E5%B8%82%E6%97%A5%E5%90%89%E7%94%BA14-36"
+                                class="group absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center"
+                            >
+                                <svg aria-hidden="true" class="size-10 text-shu transition-transform duration-300 group-hover:-translate-y-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M12 21s-7-6.2-7-11.5a7 7 0 0114 0C19 14.8 12 21 12 21z" />
+                                    <circle cx="12" cy="9.5" r="2.5" />
+                                </svg>
+                                <span class="text-sm text-ink-soft">福岡県久留米市日吉町14-36 原口ビル</span>
+                                <span class="border border-ink px-5 py-2 text-sm tracking-wide-jp transition-colors group-hover:bg-ink group-hover:text-paper">
+                                    地図を表示する<span class="sr-only">（Googleマップを読み込みます）</span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div data-reveal>
+                        <div class="relative isolate">
+                            <span aria-hidden="true" class="pointer-events-none absolute -top-12 -left-2 -z-10 font-serif text-9xl leading-none text-ink/5 select-none">店</span>
+                            <p aria-hidden="true" class="font-serif text-xs tracking-label text-shu uppercase">Information</p>
+                            <h2 id="access-title" class="mt-3 text-2xl leading-snug tracking-wide-jp sm:text-3xl lg:text-4xl">店舗案内</h2>
+                        </div>
+
+                        <dl class="mt-10 divide-y divide-line border-y border-line text-sm">
+                            <div class="flex gap-4 py-4">
+                                <dt class="w-20 shrink-0 font-serif tracking-wide-jp sm:w-28">店名</dt>
+                                <dd class="text-ink-soft">旬の九州 よか</dd>
+                            </div>
+                            <div class="flex gap-4 py-4">
+                                <dt class="w-20 shrink-0 font-serif tracking-wide-jp sm:w-28">住所</dt>
+                                <dd class="text-ink-soft">〒830-0017 福岡県久留米市日吉町14-36 原口ビル</dd>
+                            </div>
+                            <div class="flex gap-4 py-4">
+                                <dt class="w-20 shrink-0 font-serif tracking-wide-jp sm:w-28">電話</dt>
+                                <dd class="text-ink-soft"><a href="tel:05017247878" class="underline underline-offset-4 hover:text-shu">050-1724-7878</a></dd>
+                            </div>
+                            <div class="flex gap-4 py-4">
+                                <dt class="w-20 shrink-0 font-serif tracking-wide-jp sm:w-28">営業時間</dt>
+                                <dd class="text-ink-soft">
+                                    <span class="block">月・火・木・金・土 17:00 – 23:00</span>
+                                    <span class="block">（L.O. 料理 22:00 / ドリンク 22:30）</span>
+                                </dd>
+                            </div>
+                            <div class="flex gap-4 py-4">
+                                <dt class="w-20 shrink-0 font-serif tracking-wide-jp sm:w-28">定休日</dt>
+                                <dd class="text-ink-soft">水曜日・日曜日・1月1日</dd>
+                            </div>
+                            <div class="flex gap-4 py-4">
+                                <dt class="w-20 shrink-0 font-serif tracking-wide-jp sm:w-28">席</dt>
+                                <dd class="text-ink-soft">カウンター席・テーブル席</dd>
+                            </div>
+                            <div class="flex gap-4 py-4">
+                                <dt class="w-20 shrink-0 font-serif tracking-wide-jp sm:w-28">アクセス</dt>
+                                <dd class="text-ink-soft">
+                                    <span class="block">JR久留米駅より徒歩10分</span>
+                                    <span class="block">西鉄久留米駅より徒歩10分</span>
+                                    <span class="block">六ツ門・シティプラザ前バス停より徒歩2分</span>
+                                    <span class="block">西鉄久留米駅から約800m</span>
+                                </dd>
+                            </div>
+                            <div class="flex gap-4 py-4">
+                                <dt class="w-20 shrink-0 font-serif tracking-wide-jp sm:w-28">駐車場</dt>
+                                <dd class="text-ink-soft">無 （近隣にコインパーキング有り）</dd>
+                            </div>
+                            <div class="flex gap-4 py-4">
+                                <dt class="w-20 shrink-0 font-serif tracking-wide-jp sm:w-28">お支払い</dt>
+                                <dd class="text-ink-soft">
+                                    <span class="block text-ink">クレジットカード</span>
+                                    <span class="block">VISA、Mastercard、JCB、アメリカン・エキスプレス、ダイナースクラブ、Discover Card、三菱UFJカード、銀聯</span>
+                                    <span class="mt-3 block text-ink">電子マネー・QR決済</span>
+                                    <span class="block">Suica、PASMO、ICOCA、楽天Edy、楽天ペイ、PayPay、QUICPay、au PAY</span>
+                                </dd>
+                            </div>
+                        </dl>
+
+                        <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+                            <a href="https://www.google.com/maps/search/?api=1&amp;query=%E7%A6%8F%E5%B2%A1%E7%9C%8C%E4%B9%85%E7%95%99%E7%B1%B3%E5%B8%82%E6%97%A5%E5%90%89%E7%94%BA14-36+%E5%8E%9F%E5%8F%A3%E3%83%93%E3%83%AB" target="_blank" rel="noopener" class="inline-flex min-h-12 items-center justify-center gap-2 border border-ink px-7 py-3 text-sm tracking-wide-jp text-ink transition-colors duration-300 hover:bg-ink hover:text-paper">
+                                地図を開く<span class="sr-only">（Googleマップが新しいタブで開きます）</span>
+                            </a>
+                            <a href="tel:05017247878" class="inline-flex min-h-12 items-center justify-center gap-2 bg-shu px-7 py-3 text-sm tracking-wide-jp text-paper transition-colors duration-300 hover:bg-shu-deep">電話で予約する</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== 締めくくり ===== -->
+            <section class="on-dark relative isolate overflow-hidden bg-night py-section-lg text-paper" aria-labelledby="closing-title">
+                <img data-photo="shop/street" alt="" class="absolute inset-0 -z-10 size-full object-cover opacity-60">
+                <div aria-hidden="true" class="absolute inset-0 -z-10 bg-linear-to-r from-night/90 via-night/60 to-night/10"></div>
+
+                <div class="mx-auto flex max-w-6xl flex-col items-start gap-10 px-5 sm:flex-row sm:items-end sm:justify-between lg:px-8" data-reveal>
+                    <h2 id="closing-title" class="vertical-rl text-3xl leading-snug tracking-wide-jp sm:text-4xl lg:text-5xl">
+                        <span class="block">またのお越しを、</span>
+                        <span class="block sm:mt-16">お待ちしております。</span>
+                    </h2>
+                    <div class="sm:text-right">
+                        <p class="font-serif tracking-wide-jp">旬の九州 よか</p>
+                        <p class="mt-1 text-sm text-paper/85">久留米・日吉町　JR久留米駅より徒歩10分</p>
+                        <a href="tel:05017247878" class="mt-6 inline-flex min-h-12 items-center justify-center gap-2 bg-shu px-7 py-3 text-sm tracking-wide-jp text-paper transition-colors duration-300 hover:bg-shu-deep">電話で予約する 050-1724-7878</a>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- ===== フッター ===== -->
+        <footer class="on-dark bg-night text-paper">
+            <div class="mx-auto grid max-w-6xl gap-12 px-5 py-16 md:grid-cols-2 lg:px-8">
+                <div>
+                    <p class="font-serif text-2xl tracking-wide-jp">旬の九州 よか</p>
+                    <p class="mt-1 text-xs tracking-label text-wood uppercase" lang="en">Shun no Kyushu YOKA</p>
+                    <address class="mt-6 text-sm leading-loose not-italic text-paper/85">
+                        〒830-0017<br>
+                        福岡県久留米市日吉町14-36 原口ビル<br>
+                        TEL <a href="tel:05017247878" class="underline-offset-4 hover:underline">050-1724-7878</a>
+                    </address>
+                </div>
+
+                <div class="md:justify-self-end">
+                    <nav aria-label="フッターメニュー">
+                        <ul class="grid grid-cols-2 gap-x-10 gap-y-1 text-sm tracking-wide-jp">
+                            <li><a href="#concept" class="inline-block py-2 text-paper/85 transition-colors hover:text-wood">想い</a></li>
+                            <li><a href="#food" class="inline-block py-2 text-paper/85 transition-colors hover:text-wood">お品書き</a></li>
+                            <li><a href="#drink" class="inline-block py-2 text-paper/85 transition-colors hover:text-wood">お飲み物</a></li>
+                            <li><a href="#space" class="inline-block py-2 text-paper/85 transition-colors hover:text-wood">空間</a></li>
+                            <li><a href="#access" class="inline-block py-2 text-paper/85 transition-colors hover:text-wood">店舗案内</a></li>
+                        </ul>
+                    </nav>
+
+                    <ul class="mt-6 flex gap-6 text-sm">
+                        <li>
+                            <a href="https://www.instagram.com/seasonalkyushuyoka/" target="_blank" rel="noopener" class="inline-block py-2 text-paper/85 underline-offset-4 hover:text-wood hover:underline">
+                                Instagram<span class="sr-only">（新しいタブで開きます）</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://lin.ee/HyL2E9H" target="_blank" rel="noopener" class="inline-block py-2 text-paper/85 underline-offset-4 hover:text-wood hover:underline">
+                                LINE<span class="sr-only">（新しいタブで開きます）</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-paper/10">
+                <p class="mx-auto max-w-6xl px-5 py-6 text-xs text-paper/70 lg:px-8">
+                    <small>&copy; <span data-year>2026</span> 旬の九州 よか</small>
+                </p>
+            </div>
+        </footer>
+
+        <!-- ===== スマホ下部の予約バー（ファーストビューが見えている間は隠す） ===== -->
+        <div data-reserve-bar class="on-dark fixed inset-x-0 bottom-0 z-30 bg-night/95 px-4 pt-3 pb-safe text-paper backdrop-blur transition-transform duration-300 inert:translate-y-full md:hidden">
+            <button type="button" popovertarget="reserve-menu" class="flex min-h-12 w-full items-center justify-center gap-2 bg-shu text-sm tracking-wide-jp text-paper transition-colors hover:bg-shu-deep">
+                ご予約・お問い合わせ
+                <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M6 15l6-6 6 6" />
+                </svg>
+            </button>
+        </div>
+
+        <div id="reserve-menu" popover aria-label="ご予約・お問い合わせ" class="on-dark inset-x-0 top-auto bottom-bar m-0 w-full max-w-none border-t border-paper/15 bg-night text-paper md:hidden">
+            <ul class="divide-y divide-paper/15">
+                <li>
+                    <a href="tel:05017247878" class="flex min-h-14 items-center gap-4 px-5 py-3 transition-colors hover:bg-paper/10">
+                        <svg aria-hidden="true" class="size-6 shrink-0 text-wood" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a1 1 0 01-1 1A16 16 0 014 5a1 1 0 011-1" />
+                        </svg>
+                        <span>
+                            <span class="block font-serif tracking-wide-jp">電話で予約する</span>
+                            <span class="block text-sm text-paper/75">050-1724-7878</span>
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://lin.ee/HyL2E9H" target="_blank" rel="noopener" class="flex min-h-14 items-center gap-4 px-5 py-3 transition-colors hover:bg-paper/10">
+                        <svg aria-hidden="true" class="size-6 shrink-0 text-wood" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M4 6a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2h-7l-4 3v-3H6a2 2 0 01-2-2z" />
+                        </svg>
+                        <span class="block font-serif tracking-wide-jp">LINEで問い合わせる<span class="sr-only">（新しいタブで開きます）</span></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.google.com/maps/search/?api=1&amp;query=%E7%A6%8F%E5%B2%A1%E7%9C%8C%E4%B9%85%E7%95%99%E7%B1%B3%E5%B8%82%E6%97%A5%E5%90%89%E7%94%BA14-36+%E5%8E%9F%E5%8F%A3%E3%83%93%E3%83%AB" target="_blank" rel="noopener" class="flex min-h-14 items-center gap-4 px-5 py-3 transition-colors hover:bg-paper/10">
+                        <svg aria-hidden="true" class="size-6 shrink-0 text-wood" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 21s-7-6.2-7-11.5a7 7 0 0114 0C19 14.8 12 21 12 21z" />
+                            <circle cx="12" cy="9.5" r="2.5" />
+                        </svg>
+                        <span class="block font-serif tracking-wide-jp">地図を開く<span class="sr-only">（Googleマップが新しいタブで開きます）</span></span>
+                    </a>
+                </li>
+            </ul>
+            <p class="border-t border-paper/15 px-5 py-3 text-xs text-paper/75">
+                <span class="block">月・火・木・金・土 17:00 – 23:00</span>
+                <span class="block">定休日 水曜日・日曜日・1月1日</span>
+            </p>
+        </div>
+    </body>
+</html>
